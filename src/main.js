@@ -89,17 +89,62 @@ function getBotReply(query) {
   return "Je ne suis pas certain d'avoir la réponse exacte, mais notre équipe est là pour vous ! Laissez-nous un message via le formulaire de contact ou passez au 12 rue des Rayons."
 }
 
-function handleSendMessage(text) {
+// URL du Webhook Make.com
+const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/b5gxhcm0tx3rpwzavlxqmp7w5m7zld63'
+
+async function handleSendMessage(text) {
   if (!text || !text.trim()) return
   appendMessage(text, 'user')
   chatbotInput.value = ''
 
   const typing = showTypingIndicator()
-  setTimeout(() => {
+
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 25000)
+
+    const response = await fetch(MAKE_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        question: text,
+        message: text,
+        prompt: text,
+        text: text
+      }),
+      signal: controller.signal
+    })
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      throw new Error(`Erreur webhook: HTTP ${response.status}`)
+    }
+
+    const raw = await response.text()
+    let botReply = raw.trim()
+
+    // Si la réponse est au format JSON, on extrait le texte
+    try {
+      const parsed = JSON.parse(raw)
+      if (typeof parsed === 'string') {
+        botReply = parsed
+      } else if (parsed && typeof parsed === 'object') {
+        botReply = parsed.reply || parsed.response || parsed.message || parsed.answer || parsed.output || raw
+      }
+    } catch {
+      // Réponse en texte brut
+    }
+
     typing.remove()
-    const reply = getBotReply(text)
-    appendMessage(reply, 'bot')
-  }, 450)
+    appendMessage(botReply || getBotReply(text), 'bot')
+  } catch (error) {
+    console.warn('Erreur ou délai webhook Make, utilisation de la réponse locale :', error)
+    typing.remove()
+    const fallbackReply = getBotReply(text)
+    appendMessage(fallbackReply, 'bot')
+  }
 }
 
 chatbotForm.addEventListener('submit', (e) => {

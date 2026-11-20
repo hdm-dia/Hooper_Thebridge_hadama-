@@ -71,6 +71,44 @@
 
   <footer>Hopper · Atelier vélo · site de démonstration</footer>
 
+  <!-- Widget Chatbot -->
+  <div id="chatbot">
+    <div id="chatbot-window" class="chatbot-hidden" aria-hidden="true">
+      <div class="chatbot-header">
+        <div class="chatbot-header-info">
+          <span class="chatbot-avatar">🚲</span>
+          <div>
+            <b>Hopper Bot</b>
+            <span class="chatbot-status">En ligne</span>
+          </div>
+        </div>
+        <button id="chatbot-close" type="button" aria-label="Fermer le chat">&times;</button>
+      </div>
+
+      <div id="chatbot-messages" class="chatbot-messages">
+        <div class="chatbot-msg bot">
+          Bonjour ! 👋 Je suis l'assistant de l'Atelier Hopper. Comment puis-je vous aider aujourd'hui ?
+        </div>
+        <div class="chatbot-chips">
+          <button type="button" class="chatbot-chip" data-query="Quels sont vos tarifs ?">🛠️ Tarifs</button>
+          <button type="button" class="chatbot-chip" data-query="Quels sont vos horaires et adresse ?">📍 Horaires</button>
+          <button type="button" class="chatbot-chip" data-query="Réparez-vous les vélos électriques ?">⚡ VAE</button>
+          <button type="button" class="chatbot-chip" data-query="Faut-il prendre rendez-vous ?">📅 RDV</button>
+        </div>
+      </div>
+
+      <form id="chatbot-form" class="chatbot-form">
+        <input id="chatbot-input" type="text" placeholder="Posez une question..." autocomplete="off" required>
+        <button type="submit" id="chatbot-send" aria-label="Envoyer">➤</button>
+      </form>
+    </div>
+
+    <button id="chatbot-toggle" type="button" aria-label="Ouvrir le chat">
+      <span class="chatbot-toggle-icon">💬</span>
+      <span class="chatbot-toggle-label">Besoin d'aide ?</span>
+    </button>
+  </div>
+
   <script type="module" src="src/main.js"></script>
 </body>
 </html>
